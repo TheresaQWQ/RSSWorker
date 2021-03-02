@@ -51,12 +51,12 @@ const utils = {
     const result = tmp1.replace("{{items}}", tmp2.join(''));
     return result;
   },
-  makeResp: (body, ctype = "application/xml; charset=utf-8", status = 200) => {
+  makeResp: (body, ContentType = "application/xml; charset=utf-8", status = 200) => {
     return new Response(body, {
       status: status,
       headers: {
         "X-Powered-By": "Cloudflare Worker",
-        "Content-Type": ctype,
+        "Content-Type": ContentType,
       }
     })
   }
@@ -71,7 +71,7 @@ async function handleRequest(request) {
   const query = utils.query(request.url);
 
   if (path === '/') {
-    return utils.makeResp(await fetch('https://cdn.jsdelivr.net/gh/TheresaQWQ/RSSWorker@main/template/index.html').body);
+    return utils.makeResp((await fetch('https://cdn.jsdelivr.net/gh/TheresaQWQ/RSSWorker@main/template/index.html')).body, "text/html; charset=utf-8");
   } else if (path === '/bili/dynamic') {
     // 本段代码复制自 RSSHub
     const uid = query.uid;
