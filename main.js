@@ -189,6 +189,7 @@ async function handleRequest(request) {
         desc: `${data_content || getDes(data)}${origin && getOriginName(origin) ? `<br><br>//转发自: @${getOriginName(origin)}: ${getOriginTitle(origin.item || origin)}${getDes(origin.item || origin)}` : `${getOriginDes(origin)}`}<br>${getUrl(data)}${getUrl(origin)}${getIframe(data)}${getIframe(origin)}${imgHTML ? `<br>${imgHTML}` : ''}${videoHTML ? `<br>${videoHTML}` : ''}`,
         time: new Date(item.desc.timestamp * 1000).toUTCString(),
         link: link,
+        guid: link
       };
     });
 
