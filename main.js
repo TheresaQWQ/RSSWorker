@@ -69,17 +69,35 @@ const utils = {
 async function handleRequest(request) {
   const path = new URL(request.url).pathname;
   const query = utils.query(request.url);
+  const resp = {
+    statusCode: 200,
+    data: [{
+      title: '',
+      desc: '',
+      link: '',
+      items: [{
+        title: '',
+        desc: '',
+        time: '',
+        guid: '',
+        link: ''
+      }]
+    }]
+  }
 
   if (path === '/') {
     return utils.makeResp((await fetch('https://cdn.jsdelivr.net/gh/TheresaQWQ/RSSWorker@main/template/index.html')).body, "text/html; charset=utf-8");
   } else if (path === '/bili/dynamic') {
+    // 哔哩哔哩动态
     // 本段代码复制自 RSSHub
+
     const uid = query.uid;
-    const resp = await fetch(`https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid=${uid}`);
-    const data = (await resp.json()).data.cards;
+    const response = await fetch(`https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid=${uid}`);
+    const data = (await response.json()).data.cards;
     const title = `${data[0].desc.user_profile.info.uname} 的 bilibili 动态`;
     const link = `https://space.bilibili.com/${uid}/dynamic`;
-    const items = data.map((item) => {
+
+    resp.data.items = data.map((item) => {
       const parsed = JSON.parse(item.card);
       const data = parsed.item || parsed;
       const origin = parsed.origin ? JSON.parse(parsed.origin) : null;
@@ -191,10 +209,30 @@ async function handleRequest(request) {
         link: link,
         guid: link
       };
-    });
+    })
+    resp.data.title = title
+    resp.data.desc = title
+    resp.data.link = link
+  } else if (path === '/bili/video') {
+    const uid = query.uid
+    const data = await (await fetch(`https://api.bilibili.com/x/space/arc/search?mid=${uid}`)).json()
+    const list = data.data.list.vlist
 
-    return utils.makeResp(utils.makeRSS(title, title, link, items));
+    resp.data.title = `${data.data.list.vlist[0].author} 投稿的视频`
+    resp.data.desc = `${data.data.list.vlist[0].author} 投稿的视频`
+    resp.data.link = `https://space.bilibili.com/${uid}`
+    resp.data.items = list.map(item => {
+      return {
+        title: item.title,
+        desc: item.description,
+        time: item.created * 1000,
+        link: `https://www.bilibili.com/video/${item.bvid}`,
+        guid: item.aid
+      }
+    })
   } else {
-    return utils.makeResp("404 Not Found!", "", 404);
+    return utils.makeResp("404 Not Found", "text/plain", resp.statusCode);
   }
+
+  return utils.makeResp(utils.makeRSS(resp.data.title, resp.data.desc, resp.data.link, resp.data.items), "application/xml", resp.statusCode);
 }
