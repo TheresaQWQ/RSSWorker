@@ -10,7 +10,8 @@
 
 ### 哔哩哔哩
 #### 动态
-路由地址: `/bili/dynamic`
+- 路由地址: `/bili/dynamic`
+- 作者：@TheresaQWQ
 
 路由参数:
 |参数|类型|注释|
@@ -18,3 +19,14 @@
 |uid|Number|B站uid|
 
 示例地址：[https://rss.theresa.workers.dev/bili/dynamic?uid=631070414](https://rss.theresa.workers.dev/bili/dynamic?uid=631070414)
+
+#### 视频
+- 路由地址: `/bili/video`
+- 作者：@TheresaQWQ
+
+路由参数:
+|参数|类型|注释|
+|-|-|-|
+|uid|Number|B站uid|
+
+示例地址：[https://rss.theresa.workers.dev/bili/video?uid=631070414](https://rss.theresa.workers.dev/bili/video?uid=631070414)
